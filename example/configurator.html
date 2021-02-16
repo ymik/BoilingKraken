@@ -80,12 +80,10 @@
         return lock
       },
       on: () => {
-        console.log('on')
         for (let btn of percentButtons) btn.disabled = true
         lock = true
       },
       off: () => {
-        console.log('off')
         for (let btn of percentButtons) btn.disabled = false
         lock = false
       }
@@ -116,13 +114,11 @@
       }
       time = currentTime
       val += Math.random() * ((from < to) ? 1 : -1)
-      console.log('anim '+val)
       if (val < Math.min(from, to) || val > Math.max(from, to)) {
         elm.innerHTML = label
         lock.off()
         return
       }
-      console.log('anim 3')
       elm.innerHTML = `${Math.round(val)}%`
       boiler.setProgress(val)
       requestAnimationFrame(anim)
