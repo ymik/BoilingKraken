@@ -1,37 +1,61 @@
-## Welcome to GitHub Pages
+# BoilingKraken
 
-You can use the [editor on GitHub](https://github.com/ymik/BoilingKraken/edit/gh-pages/index.md) to maintain and preview the content for your website in Markdown files.
+Open `/example/configurator.html` to see an example of a progress bar.
 
-Whenever you commit to this repository, GitHub Pages will run [Jekyll](https://jekyllrb.com/) to rebuild the pages in your site, from the content in your Markdown files.
+## Basic usage
 
-### Markdown
+```javascript
+import {boilingKraken} from '/BoilingKraken/src/BoilingKraken.js'
+let boiler = boilingKraken(
+  bindToElement, // HTMLElement to bind, ad example document.querySelector('div.progress')
+  yourConfiguration // or skip for default configuration
+)
+boiler.setProgress(0) // set progress to 0%
+boiler.setProgress(50) // set progress to 50%
+boiler.setProgress(100) // set progress to 100%
+```
+## Configurator
 
-Markdown is a lightweight and easy-to-use syntax for styling your writing. It includes conventions for
+Use `/example/configurator.html` to create a new configuration.
+You can skip any parameter, it will be replaced with the default value.
 
-```markdown
-Syntax highlighted code block
+### Default configuration:
+```javascript
+{
+  numOfTentacles: 10,
+  startKrakenRadius: 10,
+  maxTentacleCastPercent: 10, // max increment out from inner circle for a tentacle in percents of base radius
+  tension: 1, // spline smoothing
 
-# Header 1
-## Header 2
-### Header 3
+  // animations & transitions configuration
+  maxFPS: 120, // max frames per second for animation
+  minGrowthSpeed: 75, // min speed for one tentacle growth transition in % of 1 second
+  maxGrowthSpeed: 94, // max speed for one tentacle growth transition in % of 1 second
+  minRotationSpeed: 75, // min speed for one tentacle rotation transition in % of 1 second
+  maxRotationSpeed: 150, // max speed for one tentacle rotation transition in % of 1 second
+  baseRotationSpeed: 5, // base speed of rotation animation: how many seconds are assumed for one complete rotation
 
-- Bulleted
-- List
+  // style properties
+  color: '#275aff',
+  backgroundColor: '#00000010',
+  svgOverlay: '<circle cx="100" cy="100" r="45" stroke-width="4" stroke="#fff" fill="#00000000" />'
+    + '<line x1="85" y1="85" x2="115" y2="115" stroke-width="4" stroke="#fff" />'
+    + '<line x1="115" y1="85" x2="85" y2="115" stroke-width="4" stroke="#fff" />'
+    + '<circle cx="100" cy="100" r="100" fill="#00000000" style="cursor: pointer" />',
+}
+```
+### SVG overlay
 
-1. Numbered
-2. List
-
-**Bold** and _Italic_ and `Code` text
-
-[Link](url) and ![Image](src)
+You can add multiple SVG nodes as an overlay for the progress bar.
+Here's an example of the default SVG overlay for **BoilingKraken**:
+```SVG
+<circle cx="100" cy="100" r="45" stroke-width="4" stroke="#fff" fill="#00000000" />
+<line x1="85" y1="85" x2="115" y2="115" stroke-width="4" stroke="#fff" />
+<line x1="115" y1="85" x2="85" y2="115" stroke-width="4" stroke="#fff" />
+<circle cx="100" cy="100" r="100" fill="#00000000" style="cursor: pointer" />
 ```
 
-For more details see [GitHub Flavored Markdown](https://guides.github.com/features/mastering-markdown/).
-
-### Jekyll Themes
-
-Your Pages site will use the layout and styles from the Jekyll theme you have selected in your [repository settings](https://github.com/ymik/BoilingKraken/settings). The name of this theme is saved in the Jekyll `_config.yml` configuration file.
-
-### Support or Contact
-
-Having trouble with Pages? Check out our [documentation](https://docs.github.com/categories/github-pages-basics/) or [contact support](https://support.github.com/contact) and we’ll help you sort it out.
+## Dependencies
+All dependency libraries are placed in `/lib`
+* There is only one dependency for `BoilingKraken` - library [`@georgedoescode/spline`](https://github.com/georgedoescode/splinejs);
+* In addition, **Configurator** `/example/configurator.html` uses some libraries from [`@codemirror`](https://codemirror.net) project.
