@@ -1,5 +1,5 @@
 <html lang="en">
-<head><title>Boiling Kraken</title>
+<head><title>Boiling Kraken configurator</title>
     <style>
         div {
             text-align: left;
@@ -64,8 +64,6 @@
 <script src="../lib/@codemirror/matchbrackets.js"></script>
 <script src="../lib/@codemirror/continuecomment.js"></script>
 <script src="../lib/@codemirror/comment.js"></script>
-<!--<script type="module" src="../lib/spline/spline.js"></script>-->
-<!--<script type="module" src="BoilingKraken.js"></script>-->
 <script type="module">
   import {boilingKraken} from '../src/BoilingKraken.js'
   const boiler = boilingKraken(document.getElementById('boiler'))
@@ -74,40 +72,68 @@
   for (let i = 0; i <= 100; i += 10) html += `<button id="b${i}" value="${i}">${i}</button>`
   html += `<button id="full">full</button>`
   document.getElementById('buttons').innerHTML = html
-  let lock = false
+  let percentButtons = []
+  const lock = (() => {
+    let lock = false
+    return {
+      isOn: () => {
+        return lock
+      },
+      on: () => {
+        console.log('on')
+        for (let btn of percentButtons) btn.disabled = true
+        lock = true
+      },
+      off: () => {
+        console.log('off')
+        for (let btn of percentButtons) btn.disabled = false
+        lock = false
+      }
+    }
+  })()
   const changePercent = (e) => {
-    if (lock) return
+    if (lock.isOn()) return
     boiler.setProgress(parseFloat(e.currentTarget.value))
   }
-  for (let i = 0; i <= 100; i += 10)
-    document.getElementById('b' + i).onclick = changePercent;
-  document.getElementById('full').onclick = () => {
-    lock = true
-    let p = 0
+  percentButtons[0] = document.getElementById('full')
+  percentButtons[1] = document.getElementById('null')
+  for (let i = 0; i <= 100; i += 10) {
+    const idx = percentButtons.length
+    percentButtons[idx] = document.getElementById('b' + i)
+    percentButtons[idx].onclick = changePercent;
+  }
+  const transit = (elm, label, from, to, stepDuration) => {
+    if (lock.isOn()) return
+    lock.on()
+    let val = from
+    let time = new Date().getTime()
+    boiler.setProgress(val)
     const anim = () => {
-      if (p < 100) p += Math.random()
-      else {
-        lock = false
+      const currentTime = new Date().getTime()
+      if (currentTime - time < stepDuration) {
+        requestAnimationFrame(anim)
         return
       }
-      boiler.setProgress(p)
-      setInterval(anim, 500)
+      time = currentTime
+      val += Math.random() * ((from < to) ? 1 : -1)
+      console.log('anim '+val)
+      if (val < Math.min(from, to) || val > Math.max(from, to)) {
+        elm.innerHTML = label
+        lock.off()
+        return
+      }
+      console.log('anim 3')
+      elm.innerHTML = `${Math.round(val)}%`
+      boiler.setProgress(val)
+      requestAnimationFrame(anim)
     }
     anim()
   }
-  document.getElementById('null').onclick = () => {
-    lock = true
-    let p = 100
-    const anim = () => {
-      if (p > 0) p -= Math.random()
-      else {
-        lock = false
-        return
-      }
-      boiler.setProgress(p)
-      setInterval(anim, 500)
-    }
-    anim()
+  percentButtons[0].onclick = () => {
+    transit(percentButtons[0], 'full', 0, 100, 50)
+  }
+  percentButtons[1].onclick = () => {
+    transit(percentButtons[1], 'null', 100, 0, 50)
   }
 
   let editor = CodeMirror.fromTextArea(document.getElementById("configurationEditor"), {
