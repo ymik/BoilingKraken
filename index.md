@@ -1,6 +1,6 @@
 # BoilingKraken
 
-Project repository: https://github.com/ymik/BoilingKraken
+Project repository: [https://github.com/ymik/BoilingKraken](https://github.com/ymik/BoilingKraken)
 
 ## Basic usage
 
