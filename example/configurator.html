@@ -1,0 +1,127 @@
+<html lang="en">
+<head><title>Boiling Kraken</title>
+    <style>
+        div {
+            text-align: left;
+        }
+
+        #boiler {
+            width: 300pt;
+            height: 300pt;
+        }
+
+        #boiler svg.boilingKraken {
+            width: 100%;
+            height: 100%;
+        }
+
+        #configuration, #configurationEditor {
+            width: 100%;
+        }
+
+        #configurationEditor {
+            overflow: auto;
+        }
+    </style>
+</head>
+<body>
+<div>
+    <div id="boiler"></div>
+    <br/>
+    <div id="buttons"></div>
+    <br/>
+    <div id="configuration">
+        <button id="applyConfiguration">Apply configuration:</button>
+        <br/>
+        <!--suppress HtmlFormInputWithoutLabel -->
+        <textarea rows="14" id="configurationEditor">{
+  numOfTentacles: 10,
+  startKrakenRadius: 10,
+  maxTentacleCastPercent: 10, // max increment out from inner circle for a tentacle in percents of base radius
+  tension: 1, // spline smoothing
+
+  // animations & transitions configuration
+  maxFPS: 120, // max frames per second for animation
+  minGrowthSpeed: 75, // min speed for one tentacle growth transition in % of 1 second
+  maxGrowthSpeed: 94, // max speed for one tentacle growth transition in % of 1 second
+  minRotationSpeed: 75, // min speed for one tentacle rotation transition in % of 1 second
+  maxRotationSpeed: 150, // max speed for one tentacle rotation transition in % of 1 second
+  baseRotationSpeed: 5, // base speed of rotation animation: how many seconds are assumed for one complete rotation
+
+  // style properties
+  color: '#275aff',
+  backgroundColor: '#00000010',
+  svgOverlay: `<circle cx="100" cy="100" r="45" stroke-width="4" stroke="#fff" fill="#00000000" />`
+    + `<line x1="85" y1="85" x2="115" y2="115" stroke-width="4" stroke="#fff" />`
+    + `<line x1="115" y1="85" x2="85" y2="115" stroke-width="4" stroke="#fff" />`
+    + `<circle cx="100" cy="100" r="100" fill="#00000000" style="cursor: pointer" />`
+}</textarea>
+    </div>
+</div>
+<link rel="stylesheet" href="../lib/@codemirror/codemirror.css">
+<script src="../lib/@codemirror/codemirror.js"></script>
+<script src="../lib/@codemirror/javascript.js"></script>
+<script src="../lib/@codemirror/matchbrackets.js"></script>
+<script src="../lib/@codemirror/continuecomment.js"></script>
+<script src="../lib/@codemirror/comment.js"></script>
+<!--<script type="module" src="../lib/spline/spline.js"></script>-->
+<!--<script type="module" src="BoilingKraken.js"></script>-->
+<script type="module">
+  import {boilingKraken} from '../src/BoilingKraken.js'
+  const boiler = boilingKraken(document.getElementById('boiler'))
+
+  let html = '<button id="null">null</button>'
+  for (let i = 0; i <= 100; i += 10) html += `<button id="b${i}" value="${i}">${i}</button>`
+  html += `<button id="full">full</button>`
+  document.getElementById('buttons').innerHTML = html
+  let lock = false
+  const changePercent = (e) => {
+    if (lock) return
+    boiler.setProgress(parseFloat(e.currentTarget.value))
+  }
+  for (let i = 0; i <= 100; i += 10)
+    document.getElementById('b' + i).onclick = changePercent;
+  document.getElementById('full').onclick = () => {
+    lock = true
+    let p = 0
+    const anim = () => {
+      if (p < 100) p += Math.random()
+      else {
+        lock = false
+        return
+      }
+      boiler.setProgress(p)
+      setInterval(anim, 500)
+    }
+    anim()
+  }
+  document.getElementById('null').onclick = () => {
+    lock = true
+    let p = 100
+    const anim = () => {
+      if (p > 0) p -= Math.random()
+      else {
+        lock = false
+        return
+      }
+      boiler.setProgress(p)
+      setInterval(anim, 500)
+    }
+    anim()
+  }
+
+  let editor = CodeMirror.fromTextArea(document.getElementById("configurationEditor"), {
+    lineNumbers: true,
+    tabSize: 2,
+    matchBrackets: true,
+    autoCloseBrackets: true,
+    mode: "application/ld+json",
+  })
+  document.getElementById('applyConfiguration').onclick = () => {
+    const val = editor.getValue()
+    const config = Function('return ('+val+')')()
+    boiler.applyConfiguration(config)
+  }
+</script>
+</body>
+</html>

@@ -1,0 +1,30 @@
+{
+  "name": "@ymik/boilingkraken",
+  "version": "1.0.0",
+  "description": "round-filled progress bar",
+  "main": "src/BoilingKraken.js",
+  "directories": {
+    "lib": "lib"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/ymik/BoilingKraken.git"
+  },
+  "keywords": [
+    "progress",
+    "bar",
+    "kraken"
+  ],
+  "author": "K.Andryunin",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/ymik/BoilingKraken/issues"
+  },
+  "homepage": "https://github.com/ymik/BoilingKraken#readme",
+  "dependencies": {
+    "@georgedoescode/spline": "^1.0.1"
+  }
+}
