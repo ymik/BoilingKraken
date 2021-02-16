@@ -1,8 +1,6 @@
 # BoilingKraken
 
-https://github.com/ymik/BoilingKraken
-
-Open `/example/configurator.html` to see an example of a progress bar.
+Project repository: https://github.com/ymik/BoilingKraken
 
 ## Basic usage
 
