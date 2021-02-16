@@ -1,0 +1,267 @@
+<!DOCTYPE html>
+<html lang="en-US">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <!-- Begin Jekyll SEO tag v2.7.1 -->
+    <title>BoilingKraken | round-filled progress bar</title>
+    <meta name="generator" content="Jekyll v3.9.0"/>
+    <meta property="og:title" content="BoilingKraken"/>
+    <meta property="og:locale" content="en_US"/>
+    <meta name="description" content="round-filled progress bar"/>
+    <meta property="og:description" content="round-filled progress bar"/>
+    <link rel="canonical" href="https://ymik.github.io/BoilingKraken/"/>
+    <meta property="og:url" content="https://ymik.github.io/BoilingKraken/"/>
+    <meta property="og:site_name" content="BoilingKraken"/>
+    <meta name="twitter:card" content="summary"/>
+    <meta property="twitter:title" content="BoilingKraken"/>
+    <script type="application/ld+json">
+        {
+            "@type": "WebSite",
+            "headline": "BoilingKraken",
+            "url": "https://ymik.github.io/BoilingKraken/",
+            "description": "round-filled progress bar",
+            "name": "BoilingKraken",
+            "@context": "https://schema.org"
+        }</script>
+    <!-- End Jekyll SEO tag -->
+
+    <link rel="stylesheet"
+          href="https://ymik.github.io/BoilingKraken/assets/css/style.css?v=d6f5ac3aae102214b1ed31eb738ecf54016d2f14">
+    <!--[if lt IE 9]>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html5shiv/3.7.3/html5shiv.min.js"></script>
+    <![endif]-->
+    <style>
+        #example {
+            text-align: center;
+        }
+
+        #boiler svg.boilingKraken {
+            height: 300px;
+            width: 300px;
+        }
+
+        #configuration, #configurationEditor {
+            width: 100%;
+        }
+
+        #configurationEditor {
+            overflow: auto;
+        }
+
+        body {
+            padding-top: 10pt
+        }
+
+        #titlehead {
+            padding: 0;
+        }
+
+        code, pre {
+            font-size: 14px;
+            font-family: monospace;
+        }
+    </style>
+</head>
+<body>
+<h1 id="titlehead">BoilingKraken | round-filled progress bar</h1>
+<div id="example">
+
+    <div id="boiler"></div>
+    <br/>
+    <div id="buttons"></div>
+</div><br/>
+<div style="text-align: center"><button id="applyConfiguration">Apply configuration:</button></div>
+<div id="configuration">
+    <!--suppress HtmlFormInputWithoutLabel -->
+    <textarea rows="8" id="configurationEditor">{
+  numOfTentacles: 10,
+  startKrakenRadius: 10,
+  maxTentacleCastPercent: 10, // max increment out from inner circle for a tentacle in percents of base radius
+  tension: 1, // spline smoothing
+
+  // animations & transitions configuration
+  maxFPS: 120, // max frames per second for animation
+  minGrowthSpeed: 75, // min speed for one tentacle growth transition in % of 1 second
+  maxGrowthSpeed: 94, // max speed for one tentacle growth transition in % of 1 second
+  minRotationSpeed: 75, // min speed for one tentacle rotation transition in % of 1 second
+  maxRotationSpeed: 150, // max speed for one tentacle rotation transition in % of 1 second
+  baseRotationSpeed: 5, // base speed of rotation animation: how many seconds are assumed for one complete rotation
+
+  // style properties
+  color: '#275aff',
+  backgroundColor: '#00000010',
+  svgOverlay: `<circle cx="100" cy="100" r="45" stroke-width="4" stroke="#fff" fill="#00000000" />`
+    + `<line x1="85" y1="85" x2="115" y2="115" stroke-width="4" stroke="#fff" />`
+    + `<line x1="115" y1="85" x2="85" y2="115" stroke-width="4" stroke="#fff" />`
+    + `<circle cx="100" cy="100" r="100" fill="#00000000" style="cursor: pointer" />`
+}</textarea>
+</div>
+<link rel="stylesheet" href="./lib/@codemirror/codemirror.css">
+<script src="./lib/@codemirror/codemirror.js"></script>
+<script src="./lib/@codemirror/javascript.js"></script>
+<script src="./lib/@codemirror/matchbrackets.js"></script>
+<script src="./lib/@codemirror/continuecomment.js"></script>
+<script src="./lib/@codemirror/comment.js"></script>
+<script type="module">
+  import {boilingKraken} from './lib/@ymik/BoilingKraken.js'
+
+  const boiler = boilingKraken(document.getElementById('boiler'), {startKrakenRadius: 60})
+
+  let html = '<button id="null">null</button>'
+  for (let i = 0; i <= 100; i += 10) html += `<button id="b${i}" value="${i}">${i}</button>`
+  html += `<button id="full">full</button>`
+  document.getElementById('buttons').innerHTML = html
+  let lock = false
+  const changePercent = (e) => {
+    if (lock) return
+    boiler.setProgress(parseFloat(e.currentTarget.value))
+  }
+  for (let i = 0; i <= 100; i += 10)
+    document.getElementById('b' + i).onclick = changePercent;
+  document.getElementById('full').onclick = () => {
+    lock = true
+    let p = 0
+    const anim = () => {
+      if (p < 100) p += Math.random()
+      else {
+        lock = false
+        return
+      }
+      boiler.setProgress(p)
+      setInterval(anim, 500)
+    }
+    anim()
+  }
+  document.getElementById('null').onclick = () => {
+    lock = true
+    let p = 100
+    const anim = () => {
+      if (p > 0) p -= Math.random()
+      else {
+        lock = false
+        return
+      }
+      boiler.setProgress(p)
+      setInterval(anim, 500)
+    }
+    anim()
+  }
+
+  let editor = CodeMirror.fromTextArea(document.getElementById("configurationEditor"), {
+    lineNumbers: true,
+    tabSize: 2,
+    matchBrackets: true,
+    autoCloseBrackets: true,
+    mode: "application/ld+json",
+  })
+  document.getElementById('applyConfiguration').onclick = () => {
+    const val = editor.getValue()
+    const config = Function('return (' + val + ')')()
+    boiler.applyConfiguration(config)
+  }
+</script>
+
+<br/><section>
+    <h1></h1>
+    <p>Project repository: <a href="https://github.com/ymik/BoilingKraken">https://github.com/ymik/BoilingKraken</a></p>
+
+    <p>Open <code class="language-plaintext highlighter-rouge">/example/configurator.html</code> to see an example of a
+        progress bar.</p>
+
+    <h2 id="basic-usage">Basic usage</h2>
+
+    <div class="language-javascript highlighter-rouge">
+        <div class="highlight"><pre class="highlight"><code><span class="k">import</span> <span class="p">{</span><span
+                class="nx">boilingKraken</span><span class="p">}</span> <span class="k">from</span> <span
+                class="dl">'</span><span class="s1">/BoilingKraken/src/BoilingKraken.js</span><span class="dl">'</span>
+<span class="kd">let</span> <span class="nx">boiler</span> <span class="o">=</span> <span
+                    class="nx">boilingKraken</span><span class="p">(</span>
+  <span class="nx">bindToElement</span><span class="p">,</span> <span class="c1">// HTMLElement to bind, ad example document.querySelector('div.progress')</span>
+  <span class="nx">yourConfiguration</span> <span class="c1">// or skip for default configuration</span>
+<span class="p">)</span>
+<span class="nx">boiler</span><span class="p">.</span><span class="nx">setProgress</span><span class="p">(</span><span
+                    class="mi">0</span><span class="p">)</span> <span class="c1">// set progress to 0%</span>
+<span class="nx">boiler</span><span class="p">.</span><span class="nx">setProgress</span><span class="p">(</span><span
+                    class="mi">50</span><span class="p">)</span> <span class="c1">// set progress to 50%</span>
+<span class="nx">boiler</span><span class="p">.</span><span class="nx">setProgress</span><span class="p">(</span><span
+                    class="mi">100</span><span class="p">)</span> <span class="c1">// set progress to 100%</span>
+</code></pre>
+        </div>
+    </div>
+    <h2 id="configurator">Configurator</h2>
+
+    <p>Use <code class="language-plaintext highlighter-rouge">/example/configurator.html</code> to create a new
+        configuration.
+        You can skip any parameter, it will be replaced with the default value.</p>
+
+    <h3 id="default-configuration">Default configuration:</h3>
+    <div class="language-javascript highlighter-rouge">
+        <div class="highlight"><pre class="highlight"><code><span class="p">{</span>
+  <span class="nl">numOfTentacles</span><span class="p">:</span> <span class="mi">10</span><span class="p">,</span>
+  <span class="nx">startKrakenRadius</span><span class="p">:</span> <span class="mi">10</span><span class="p">,</span>
+  <span class="nx">maxTentacleCastPercent</span><span class="p">:</span> <span class="mi">10</span><span
+                    class="p">,</span> <span class="c1">// max increment out from inner circle for a tentacle in percents of base radius</span>
+  <span class="nx">tension</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span> <span
+                    class="c1">// spline smoothing</span>
+
+  <span class="c1">// animations &amp; transitions configuration</span>
+  <span class="nx">maxFPS</span><span class="p">:</span> <span class="mi">120</span><span class="p">,</span> <span
+                    class="c1">// max frames per second for animation</span>
+  <span class="nx">minGrowthSpeed</span><span class="p">:</span> <span class="mi">75</span><span
+                    class="p">,</span> <span
+                    class="c1">// min speed for one tentacle growth transition in % of 1 second</span>
+  <span class="nx">maxGrowthSpeed</span><span class="p">:</span> <span class="mi">94</span><span
+                    class="p">,</span> <span
+                    class="c1">// max speed for one tentacle growth transition in % of 1 second</span>
+  <span class="nx">minRotationSpeed</span><span class="p">:</span> <span class="mi">75</span><span
+                    class="p">,</span> <span class="c1">// min speed for one tentacle rotation transition in % of 1 second</span>
+  <span class="nx">maxRotationSpeed</span><span class="p">:</span> <span class="mi">150</span><span
+                    class="p">,</span> <span class="c1">// max speed for one tentacle rotation transition in % of 1 second</span>
+  <span class="nx">baseRotationSpeed</span><span class="p">:</span> <span class="mi">5</span><span
+                    class="p">,</span> <span class="c1">// base speed of rotation animation: how many seconds are assumed for one complete rotation</span>
+
+  <span class="c1">// style properties</span>
+  <span class="nx">color</span><span class="p">:</span> <span class="dl">'</span><span class="s1">#275aff</span><span
+                    class="dl">'</span><span class="p">,</span>
+  <span class="nx">backgroundColor</span><span class="p">:</span> <span class="dl">'</span><span
+                    class="s1">#00000010</span><span class="dl">'</span><span class="p">,</span>
+  <span class="nx">svgOverlay</span><span class="p">:</span> <span class="dl">'</span><span class="s1">&lt;circle cx="100" cy="100" r="45" stroke-width="4" stroke="#fff" fill="#00000000" /&gt;</span><span
+                    class="dl">'</span>
+    <span class="o">+</span> <span class="dl">'</span><span class="s1">&lt;line x1="85" y1="85" x2="115" y2="115" stroke-width="4" stroke="#fff" /&gt;</span><span
+                    class="dl">'</span>
+    <span class="o">+</span> <span class="dl">'</span><span class="s1">&lt;line x1="115" y1="85" x2="85" y2="115" stroke-width="4" stroke="#fff" /&gt;</span><span
+                    class="dl">'</span>
+    <span class="o">+</span> <span class="dl">'</span><span class="s1">&lt;circle cx="100" cy="100" r="100" fill="#00000000" style="cursor: pointer" /&gt;</span><span
+                    class="dl">'</span><span class="p">,</span>
+<span class="p">}</span>
+</code></pre>
+        </div>
+    </div>
+    <h3 id="svg-overlay">SVG overlay</h3>
+
+    <p>You can add multiple SVG nodes as an overlay for the progress bar.
+        Here’s an example of the default SVG overlay for <strong>BoilingKraken</strong>:</p>
+    <pre><code class="language-SVG">&lt;circle cx="100" cy="100" r="45" stroke-width="4" stroke="#fff" fill="#00000000" /&gt;
+&lt;line x1="85" y1="85" x2="115" y2="115" stroke-width="4" stroke="#fff" /&gt;
+&lt;line x1="115" y1="85" x2="85" y2="115" stroke-width="4" stroke="#fff" /&gt;
+&lt;circle cx="100" cy="100" r="100" fill="#00000000" style="cursor: pointer" /&gt;
+</code></pre>
+
+    <h2 id="dependencies">Dependencies</h2>
+    <p>All dependency libraries are placed in <code class="language-plaintext highlighter-rouge">/lib</code></p>
+    <ul>
+        <li>There is only one dependency for <code class="language-plaintext highlighter-rouge">BoilingKraken</code> -
+            library <a href="https://github.com/georgedoescode/splinejs"><code
+                    class="language-plaintext highlighter-rouge">@georgedoescode/spline</code></a>;
+        </li>
+        <li>In addition, <strong>Configurator</strong> <code class="language-plaintext highlighter-rouge">/example/configurator.html</code>
+            uses some libraries from <a href="https://codemirror.net"><code
+                    class="language-plaintext highlighter-rouge">@codemirror</code></a> project.
+        </li>
+    </ul>
+</section>
+</body>
+</html>
