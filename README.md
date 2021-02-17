@@ -38,9 +38,7 @@ You can skip any parameter, it will be replaced with the default value.
   // style properties
   color: '#275aff',
   backgroundColor: '#00000010',
-  svgOverlay: '<circle cx="100" cy="100" r="45" stroke-width="4" stroke="#fff" fill="#00000000" />'
-    + '<line x1="85" y1="85" x2="115" y2="115" stroke-width="4" stroke="#fff" />'
-    + '<line x1="115" y1="85" x2="85" y2="115" stroke-width="4" stroke="#fff" />'
+  svgOverlay: '<circle cx="100" cy="100" r="50" stroke-width="4" stroke="#fff" fill="#00000000" />'
     + '<circle cx="100" cy="100" r="100" fill="#00000000" style="cursor: pointer" />',
 }
 ```
@@ -49,9 +47,7 @@ You can skip any parameter, it will be replaced with the default value.
 You can add multiple SVG nodes as an overlay for the progress bar.
 Here's an example of the default SVG overlay for **BoilingKraken**:
 ```SVG
-<circle cx="100" cy="100" r="45" stroke-width="4" stroke="#fff" fill="#00000000" />
-<line x1="85" y1="85" x2="115" y2="115" stroke-width="4" stroke="#fff" />
-<line x1="115" y1="85" x2="85" y2="115" stroke-width="4" stroke="#fff" />
+<circle cx="100" cy="100" r="50" stroke-width="4" stroke="#fff" fill="#00000000" />
 <circle cx="100" cy="100" r="100" fill="#00000000" style="cursor: pointer" />
 ```
 

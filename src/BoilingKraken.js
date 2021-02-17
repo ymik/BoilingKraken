@@ -18,10 +18,8 @@ export const boilingKraken = (elm, configuration) => {
     // style properties
     color: '#275aff',
     backgroundColor: '#00000010',
-    svgOverlay: `<circle cx="100" cy="100" r="45" stroke-width="4" stroke="#fff" fill="#00000000" />`
-      + `<line x1="85" y1="85" x2="115" y2="115" stroke-width="4" stroke="#fff" />`
-      + `<line x1="115" y1="85" x2="85" y2="115" stroke-width="4" stroke="#fff" />`
-      + `<circle cx="100" cy="100" r="100" fill="#00000000" style="cursor: pointer" />`
+    svgOverlay: `<circle cx="100" cy="100" r="50" stroke-width="4" stroke="#fff" fill="#00000000" />`
+      + `<circle cx="100" cy="100" r="100" fill="#00000000" style="cursor: pointer" />`,
   }
   // global constants
   const fullAngle = Math.PI * 2
@@ -92,9 +90,13 @@ export const boilingKraken = (elm, configuration) => {
     + `<circle cx="100" cy="100" r="100" fill="${config.backgroundColor}" />` //#f1f1f1
     + `<clipPath id="boilerClip${krakenId}"><circle cx="100" cy="100" r="100"/></clipPath>`
     + `<path id="kraken${krakenId}" d="${pointsToPath()}" fill="${config.color}" clip-path="url(#boilerClip${krakenId})" />` //#275aff
-    + config.svgOverlay
+    + `<g id="overlay${krakenId}"></g>`
     + `</svg>`;
-  const kraken = elm.querySelector('svg.boilingKraken').querySelector(`#kraken${krakenId}`);
+  const boiler = elm.querySelector('svg.boilingKraken')
+  const kraken = boiler.querySelector(`#kraken${krakenId}`)
+  const overlay = boiler.querySelector(`#overlay${krakenId}`)
+  const changeOverlay = (svgOverlay) => overlay.innerHTML = `${svgOverlay}`
+  changeOverlay(config.svgOverlay);
   // animations
   (() => {
     const targetFrameTime = 1000 / config.maxFPS
@@ -156,7 +158,10 @@ export const boilingKraken = (elm, configuration) => {
   })()
   // control function
   return {
-    applyConfiguration: applyConfiguration,
+    applyConfiguration: (configuration) => {
+      applyConfiguration(configuration)
+      changeOverlay(config.svgOverlay)
+    },
     setProgress: (progress) => {
       krakenRadius = maxTentacleCast + progress
     },

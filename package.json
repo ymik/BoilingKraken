@@ -1,6 +1,6 @@
 {
   "name": "@ymik/boilingkraken",
-  "version": "1.0.2",
+  "version": "1.0.4",
   "description": "round-filled progress bar",
   "main": "src/BoilingKraken.js",
   "directories": {
@@ -16,14 +16,22 @@
   "keywords": [
     "progress",
     "bar",
-    "kraken"
+    "kraken",
+    "progressbar",
+    "loadingbar",
+    "loading",
+    "indicator",
+    "round",
+    "circle",
+    "svg",
+    "animation"
   ],
   "author": "K.Andryunin",
   "license": "MIT",
   "bugs": {
     "url": "https://github.com/ymik/BoilingKraken/issues"
   },
-  "homepage": "https://github.com/ymik/BoilingKraken#readme",
+  "homepage": "https://ymik.github.io/BoilingKraken/",
   "dependencies": {
     "@georgedoescode/spline": "^1.0.1"
   }
