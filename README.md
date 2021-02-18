@@ -52,7 +52,6 @@ Here's an example of the default SVG overlay for **BoilingKraken**:
 ```
 
 ## Dependencies
-All dependency libraries are placed in `/lib`
-* There is only one dependency for `BoilingKraken` - library [`@georgedoescode/spline`](https://github.com/georgedoescode/splinejs);
+* The package with `BoilingKraken` includes library [`@georgedoescode/spline`](https://github.com/georgedoescode/splinejs);
 * In addition, **Configurator** `/example/configurator.html` uses some libraries from [`@codemirror`](https://codemirror.net) project;
 * Author of idea [Ayrat Hayrullin](https://www.behance.net/hllobstrds).
