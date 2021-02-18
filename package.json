@@ -30,6 +30,9 @@
     "svg",
     "animation"
   ],
+  "dependencies": {
+    "@georgedoescode/spline": "^1.0.1"
+  },
   "author": "K.Andryunin",
   "license": "MIT",
   "bugs": {
