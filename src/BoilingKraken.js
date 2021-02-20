@@ -63,7 +63,7 @@ export const boilingKraken = (elm, configuration) => {
       for (let i = 0; i < config.numOfTentacles; i++) {
         const angle = 2 * sectorAngle * i
         tentacles[tentacles.length] = {
-          grow: {from: maxTentacleCast, to: maxTentacleCast, endTime: time},
+          grow: {from: krakenRadius, to: krakenRadius, endTime: time},
           rotate: {from: angle, to: angle, endTime: time},
           sector: {from: angle - sectorDiffAngle, to: angle + sectorDiffAngle},
         }
