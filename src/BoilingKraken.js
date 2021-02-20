@@ -99,6 +99,7 @@ export const boilingKraken = (elm, configuration) => {
   changeOverlay(config.svgOverlay);
   // animations
   (() => {
+    let tick = new Date().getTime()
     const targetFrameTime = 1000 / config.maxFPS
     const isTransitionFinished = (transition, currentTime) => (transition.endTime < currentTime)
     const newTransition = (d1, d2, minSpeed, maxSpeed, time, transition) => {
@@ -129,29 +130,30 @@ export const boilingKraken = (elm, configuration) => {
         return d1 < d2 ? -d1 : d2
       }
     }
-    let tick = new Date().getTime()
     const animate = () => {
       const currentTime = new Date().getTime()
-      maxTentacleCast = config.maxTentacleCastPercent * krakenRadius / 100
-      krakenRotation = castAngle(krakenRotation + (fullAngle * (currentTime - tick) / 1000 / config.baseRotationSpeed))
-      tick = currentTime
-      for (let tentacle of tentacles) {
-        if (isTransitionFinished(tentacle.rotate, currentTime)) newTransition(
-          anglesDiff(tentacle.rotate.from, tentacle.sector.from),
-          anglesDiff(tentacle.rotate.from, tentacle.sector.to),
-          config.minRotationSpeed, config.maxRotationSpeed,
-          currentTime, tentacle.rotate
-        )
-        else transit(tentacle.rotate, currentTime)
-        if (isTransitionFinished(tentacle.grow, currentTime)) newTransition(
-          krakenRadius - tentacle.grow.from,
-          krakenRadius + maxTentacleCast - tentacle.grow.from,
-          config.minGrowthSpeed, config.maxGrowthSpeed,
-          currentTime, tentacle.grow
-        )
-        else transit(tentacle.grow, currentTime)
+      if (currentTime - tick >= targetFrameTime) {
+        maxTentacleCast = config.maxTentacleCastPercent * krakenRadius / 100
+        krakenRotation = castAngle(krakenRotation + (fullAngle * (currentTime - tick) / 1000 / config.baseRotationSpeed))
+        tick = currentTime
+        for (let tentacle of tentacles) {
+          if (isTransitionFinished(tentacle.rotate, currentTime)) newTransition(
+            anglesDiff(tentacle.rotate.from, tentacle.sector.from),
+            anglesDiff(tentacle.rotate.from, tentacle.sector.to),
+            config.minRotationSpeed, config.maxRotationSpeed,
+            currentTime, tentacle.rotate
+          )
+          else transit(tentacle.rotate, currentTime)
+          if (isTransitionFinished(tentacle.grow, currentTime)) newTransition(
+            krakenRadius - tentacle.grow.from,
+            krakenRadius + maxTentacleCast - tentacle.grow.from,
+            config.minGrowthSpeed, config.maxGrowthSpeed,
+            currentTime, tentacle.grow
+          )
+          else transit(tentacle.grow, currentTime)
+        }
+        kraken.setAttribute("d", pointsToPath());
       }
-      kraken.setAttribute("d", pointsToPath());
       requestAnimationFrame(animate);
     }
     animate()
