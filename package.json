@@ -1,6 +1,6 @@
 {
   "name": "@ymik/boilingkraken",
-  "version": "1.0.7",
+  "version": "1.0.8",
   "description": "round-filled progress bar",
   "main": "src/BoilingKraken.js",
   "files": [
