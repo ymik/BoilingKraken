@@ -13,6 +13,8 @@ let boiler = boilingKraken(
 boiler.setProgress(0) // set progress to 0%
 boiler.setProgress(50) // set progress to 50%
 boiler.setProgress(100) // set progress to 100%
+// ....
+boiler.destruct() // destruct BoilingKraken & remove SVG
 ```
 ## Configurator
 

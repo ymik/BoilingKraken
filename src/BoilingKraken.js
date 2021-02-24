@@ -96,10 +96,16 @@ export const boilingKraken = (elm, configuration) => {
   const kraken = boiler.querySelector(`#kraken${krakenId}`)
   const overlay = boiler.querySelector(`#overlay${krakenId}`)
   const changeOverlay = (svgOverlay) => overlay.innerHTML = `${svgOverlay}`
-  changeOverlay(config.svgOverlay);
+  changeOverlay(config.svgOverlay)
+  let finishAnimation = false;
+  const destruct = () => {
+    elm.innerHTML = ''
+    finishAnimation = true
+  }
   // animations
   (() => {
     let tick = new Date().getTime()
+    let destructionCheckTick = new Date().getTime()
     const targetFrameTime = 1000 / config.maxFPS
     const isTransitionFinished = (transition, currentTime) => (transition.endTime < currentTime)
     const newTransition = (d1, d2, minSpeed, maxSpeed, time, transition) => {
@@ -132,10 +138,15 @@ export const boilingKraken = (elm, configuration) => {
     }
     const animate = () => {
       const currentTime = new Date().getTime()
+      if (!finishAnimation && destructionCheckTick + 500 <= currentTime) {
+        destructionCheckTick = currentTime
+        finishAnimation = !boiler || !document.body.contains(boiler)
+      }
+      if (finishAnimation) return
       const timeDelta = currentTime - tick
       if (timeDelta < targetFrameTime) {
         setInterval(animate, targetFrameTime - timeDelta)
-        return;
+        return
       }
       maxTentacleCast = config.maxTentacleCastPercent * krakenRadius / 100
       krakenRotation = castAngle(krakenRotation + (fullAngle * (currentTime - tick) / 1000 / config.baseRotationSpeed))
@@ -170,6 +181,7 @@ export const boilingKraken = (elm, configuration) => {
     setProgress: (progress) => {
       krakenRadius = maxTentacleCast + progress
     },
+    destruct: destruct,
   }
 }
 
